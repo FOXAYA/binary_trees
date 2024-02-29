@@ -1,54 +1,46 @@
 #include "binary_trees.h"
 
-
-#ifndef MAX_INT
-#define MAX_INT
-
 /**
- * max_int - finds larger of two int values
- * @a: first value to compare
- * @b: second value to compare
- * Return: larger int value, or value of both if equal
+ * binary_tree_height_b - Measures height of a binary tree for a bal tree
+ * @tree: tree to go through
+ * Return: the height
  */
-int max_int(int a, int b)
-{
-		return ((a > b) ? a : b);
-}
 
-#endif
-
-/**
- * binary_tree_balance_height - measures the height of a binary tree
- * @tree: root node from which to measure, starting at 1
- * Return: count of root and levels below, or 0 if `tree` is NULL
- */
-int binary_tree_balance_height(const binary_tree_t *tree)
+size_t binary_tree_height_b(const binary_tree_t *tree)
 {
-		if (!tree)
+	    size_t l = 0;
+	    size_t r = 0;
+
+		if (tree == NULL)
+		{
 			return (0);
-
-		if (!tree->left && !tree->right)
-			return (1);
-
-		return (1 + max_int(binary_tree_balance_height(tree->left),
-					binary_tree_balance_height(tree->right)));
+		}
+		else
+		{
+			if (tree)
+			{
+				l = tree->left ? 1 + binary_tree_height_b(tree->left) : 1;
+				r = tree->right ? 1 + binary_tree_height_b(tree->right) : 1;
+			}
+			return ((l > r) ? l : r);
+		}
 }
 
 /**
- * binary_tree_balance - measures the balance factor of a binary tree
- * @tree: root node from which to measure
- * Return: height of `tree` left subtree minus height of right subtree,
- * or 0 if `tree` is NULL
+ * binary_tree_balance - Measures balance factor of a binary tree
+ * @tree: tree to go through
+ * Return: balanced factor
  */
+
 int binary_tree_balance(const binary_tree_t *tree)
 {
-		int left_h, right_h;
-
-		if (!tree)
-			return (0);
-
-		left_h = binary_tree_balance_height(tree->left);
-		right_h = binary_tree_balance_height(tree->right);
-
-		return (left_h - right_h);
+	int right = 0, left = 0, total = 0;
+	
+	if (tree)
+	{
+		left = ((int)binary_tree_height_b(tree->left));
+		right = ((int)binary_tree_height_b(tree->right));
+		total = left - right;
+	}
+	return (total);
 }
