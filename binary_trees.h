@@ -22,7 +22,8 @@ struct binary_tree_s
 	struct binary_tree_s *right;
 };
 typedef struct binary_tree_s binary_tree_t;
-typedef struct binary_tree_s binary_tree_t;
+
+
 typedef struct binary_tree_s bst_t;
 typedef struct binary_tree_s avl_t;
 typedef struct binary_tree_s heap_t;
@@ -30,8 +31,8 @@ typedef struct binary_tree_s heap_t;
 typedef struct link_s
 {
 		size_t n;
-			struct binary_tree_s const *node;
-				struct link_s *next;
+		struct binary_tree_s const *node;
+		struct link_s *next;
 } link_t;
 /*  ----------------- mandatory task ---------------------------------*/
 void binary_tree_print(const binary_tree_t *);
