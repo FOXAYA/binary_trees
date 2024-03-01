@@ -1,94 +1,115 @@
 #include "binary_trees.h"
+#include "limits.h"
+int is_bst_helper(const binary_tree_t *tree, int *largest);
+
+#define VERBOSE 0
+
 /**
- * check_sub_tree_Left - check if all nodes are smaller than
- * the root specified
- * @node: node in the tree to verify condition
- * @max: value to compare
- * Return: 1 if all nodes are smaller or equal or 0 if not
- */
-int check_sub_tree_Left(const binary_tree_t *node, int max)
-{
-		int left = 0, right = 0;
-		
-		if (node == NULL)
-		{
-			return (1);
-		}
-		else
-		{
-			if (node->n >= max)
-				return (0);
-			left = check_sub_tree_Left(node->left, max);
-			right = check_sub_tree_Left(node->right, max);
-			if (left == right && left == 1)
-				return (1);
-			return (0);
-		}
-}
-/**
- * check_subtree_Right - check if all the nodes are bigger than the
- * root specified
- * @node: node in the tree to verify condition
- * @min: value to compare
- * Return: 1 if all is bigger or equal or 0 if not
- */
-int check_sub_tree_Right(const binary_tree_t *node, int min)
-{
-		int left = 0, right = 0;
-		
-		if (node == NULL)
-		{
-			return (1);
-		}
-		else
-		{
-			if (node->n <= min)
-				return (0);
-			left = check_sub_tree_Right(node->left, min);
-			right = check_sub_tree_Right(node->right, min);
-			if (left == right && left == 1)
-				return (1);
-			return (0);
-		}
-/**
- * binary_tree_is_bst - says if a tree is a bst or not
- * the process here is first verify that the left node be smaller than the root
- * then verify if the right node is bigger than th root.
- * after that verify if the left subtree has nodes smaller than root
- * and the right subtree has bigger nodes than root
- * @tree: node that point to the tree to check
- * Return: 1 if it is a BST or 0 if not
+ * binary_tree_is_bst - checks if a binary tree is a valid Binary Search Tree.
+ * @tree: A pointer to the root node of the tree to check.
+ * Return: 1 if tree is a valid BST, and 0 otherwise
  */
 int binary_tree_is_bst(const binary_tree_t *tree)
 {
-		int var = 0, left = 2, right = 2;
+	int tracker = INT_MIN;
 
-		if (tree == NULL)
-			return (0);
-		if (tree->left && tree->left->n > tree->n)
-			return (0);
-		if (tree->right && tree->right->n < tree->n)
-			return (0);
-		if (tree->left && tree->left->n < tree->n)
-		{
-			var = check_sub_tree_Left(tree->left, tree->n);
-			if (var == 0)
-				return (0);
-			left = binary_tree_is_bst(tree->left);
-		}
-		if (tree->right && tree->right->n > tree->n)
-		{		
-			var = check_sub_tree_Right(tree->right, tree->n);
-			if (var == 0)
-				return (0);
-			right = binary_tree_is_bst(tree->right);
-
-		}
-		if (left != 2 || right != 2)
-		{
-			if (left == 0 || right == 0)
-				return (0);
-		}
-		return (1);
-
+	if (tree == NULL)
+		return (0);
+	return (is_bst_helper(tree, &tracker));
 }
+/**
+ * is_left - checks if a node is a left child of some other node
+ * @node: A pointer to the node to be checked.
+ * Return: 1 if is a left child, otherwise 0
+ */
+int is_left(const binary_tree_t *node)
+{
+		if (node && node->parent)
+			return (node->parent->left == node);
+		return (0);
+}
+/**
+ * is_right - checks if a node is a right child of some other node
+ * @node: A pointer to the node to be checked.
+ * Return: 1 if is a right child, otherwise 0
+ */
+int is_right(const binary_tree_t *node)
+{
+		if (node && node->parent)
+			return (node->parent->right == node);
+		return (0);
+}
+#if !VERBOSE
+/**
+ * is_bst_helper - checks if a binary tree is a valid Binary Search Tree.
+ * @tree: A pointer to the root node of the tree to check.
+ * @largest: Value of largest node visited so far.
+ * Return: 1 if tree is a valid BST, and 0 otherwise
+ */
+int is_bst_helper(const binary_tree_t *tree, int *largest)
+{
+		int ret = 1;
+
+		if (tree != NULL)
+		{
+			ret *= is_bst_helper(tree->left, largest);
+			if (tree->n < *largest)
+				return (0);
+			*largest = tree->n;
+			if (is_left(tree) && !(tree->n < tree->parent->n))
+				return (0);
+			if (is_right(tree) && !(tree->n > tree->parent->n))
+				return (0);
+			ret *= is_bst_helper(tree->right, largest);
+		}
+		return (ret);
+}
+#else
+/**
+ * is_bst_helper - checks if a binary tree is a valid Binary Search Tree.
+ * @tree: A pointer to the root node of the tree to check.
+ * @largest: Value of largest node visited so far.
+ * Return: 1 if tree is a valid BST, and 0 otherwise
+ */
+int is_bst_helper(const binary_tree_t *tree, int *largest)
+{
+	int ret = 1;
+
+	if (tree)
+	{
+		printf("Moving to %d\n", tree->n);
+		ret *= is_bst_helper(tree->left, largest);
+		printf("done with left tree for %d: %d\n", tree->n, ret);
+		printf("largest = %d\n", *largest);
+		if (tree->n < *largest)
+			return (0);
+		*largest = tree->n;
+		printf("largest = %d\n", *largest);
+		if (is_left(tree))
+			printf("%d is %s than %d\n",
+					tree->n,
+					(tree->n < tree->parent->n) ? "smaller" : "larger",
+					tree->parent->n);
+		if (is_left(tree) && !(tree->n < tree->parent->n))
+		{
+			printf("%d is left child\n", tree->n);
+			return (0);
+		}
+		if (is_right(tree))
+			printf("%d is %s than %d\n",
+			tree->n,
+			(tree->n < tree->parent->n) ? "smaller" : "larger",
+			tree->parent->n);
+		if (is_right(tree) && !(tree->n > tree->parent->n))
+		{
+			printf("%d is right child\n", tree->n);
+			return (0);
+		}
+		ret *= is_bst_helper(tree->right, largest);
+		printf("done with right tree for %d: %d\n", tree->n, ret);
+		if (tree->parent)
+			printf("Moving back to %d\n", tree->parent->n);
+	}
+	return (ret);
+}
+#endif /* VERBOSE */
