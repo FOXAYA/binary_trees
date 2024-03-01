@@ -42,7 +42,7 @@ size_t binary_tree_depth(const binary_tree_t *tree)
 void linked_node(link_t **head, const binary_tree_t *tree, size_t level)
 {
 	link_t *new, *aux;
-	
+
 	new = malloc(sizeof(link_t));
 	if (new == NULL)
 	{
@@ -76,6 +76,7 @@ void linked_node(link_t **head, const binary_tree_t *tree, size_t level)
 void recursion(link_t **head, const binary_tree_t *tree)
 {
 		size_t level = 0;
+
 		if (tree != NULL)
 		{
 			level = binary_tree_depth(tree);
@@ -94,7 +95,7 @@ void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 {
 		link_t *head, *aux;
 		size_t height = 0, count = 0;
-		
+
 		if (!tree || !func)
 		{
 			return;
@@ -104,7 +105,7 @@ void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 			height = binary_tree_height(tree);
 			head = NULL;
 			recursion(&head, tree);
-			
+
 			while (count <= height)
 			{
 				aux = head;
